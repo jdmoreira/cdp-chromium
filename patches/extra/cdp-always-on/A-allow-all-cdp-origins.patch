@@ -1,0 +1,13 @@
+--- a/content/browser/devtools/devtools_http_handler.cc
++++ b/content/browser/devtools/devtools_http_handler.cc
+@@ void DevToolsHttpHandler::OnWebSocketRequest(
+ void DevToolsHttpHandler::OnWebSocketRequest(
+     int connection_id,
+     const net::HttpServerRequestInfo& request) {
++  // cdp-always-on: allow any Origin so CDP clients connect without passing
++  // --remote-allow-origins. Neutralizes the 403 gate added in Chrome 111.
++  remote_allow_origins_.insert("*");
+   if (!thread_)
+     return;
+
+   if (request.headers.count("origin") &&

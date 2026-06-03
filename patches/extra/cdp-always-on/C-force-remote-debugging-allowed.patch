@@ -1,0 +1,12 @@
+--- a/chrome/browser/devtools/remote_debugging_server.cc
++++ b/chrome/browser/devtools/remote_debugging_server.cc
+@@ IsRemoteDebuggingAllowed(const std::optional<bool>& is_default_user_data_dir,
+ IsRemoteDebuggingAllowed(const std::optional<bool>& is_default_user_data_dir,
+                          PrefService* local_state) {
++  // cdp-always-on: always permit remote debugging. Bypasses both the
++  // RemoteDebuggingAllowed enterprise policy and the default-user-data-dir
++  // gate (the latter is already inert in Chromium-branded builds).
++  return true;
+   if (!local_state->GetBoolean(prefs::kDevToolsRemoteDebuggingAllowed)) {
+     return base::unexpected(
+         RemoteDebuggingServer::NotStartedReason::kDisabledByPolicy);
