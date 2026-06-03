@@ -16,4 +16,5 @@ ungoogled-chromium/macos/revert-v8-sanitizer-changes.patch
 # cdp-always-on overlay (verified against 148.0.7778.215)
 extra/cdp-always-on/A-allow-all-cdp-origins.patch
 extra/cdp-always-on/C-force-remote-debugging-allowed.patch
+extra/cdp-always-on/D-default-port-no-approval.patch
 extra/cdp-always-on/E-allow-inspecting-everything.patch

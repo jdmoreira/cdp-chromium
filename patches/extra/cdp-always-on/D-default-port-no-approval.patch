@@ -1,0 +1,52 @@
+--- a/chrome/browser/devtools/remote_debugging_server.cc
++++ b/chrome/browser/devtools/remote_debugging_server.cc
+@@ -243,7 +243,7 @@
+       std::make_unique<TCPServerSocketFactoryWithPortFallback>(port),
+       output_dir,
+       /*debug_frontend_dir=*/base::FilePath(),
+-      content::DevToolsAgentHost::RemoteDebuggingServerMode::kWithApprovalOnly);
++      content::DevToolsAgentHost::RemoteDebuggingServerMode::kDefault);
+   is_http_server_running_ = true;
+ }
+ 
+@@ -364,6 +364,10 @@
+ 
+   std::string port_str =
+       command_line.GetSwitchValueASCII(::switches::kRemoteDebuggingPort);
++  // cdp-always-on: default the debug port so the socket always opens without
++  // requiring --remote-debugging-port on the command line.
++  if (port_str.empty())
++    port_str = "9222";
+   if (auto port = ParsePort(port_str)) {
+     base::FilePath output_dir;
+     if (*port == 0) {
+@@ -394,29 +398,7 @@
+         std::make_unique<TCPServerSocketFactory>(*port), output_dir,
+         debug_frontend_dir,
+         content::DevToolsAgentHost::RemoteDebuggingServerMode::kDefault);
+-  }
+-
+-  // `--remote-debugging-port` and `--remote-debugging-pipe`
+-  // take precedence over the new mode.
+-#if !BUILDFLAG(IS_ANDROID)
+-  if (!debugging_server_started &&
+-      base::FeatureList::IsEnabled(
+-          ::features::kDevToolsAcceptDebuggingConnections)) {
+-    // In approval mode, each incoming connection needs to be approved by
+-    // the user (allow/disallow actions are tracked via the
+-    // DevToolsRemoteDebuggingConnectionPermission histogram).
+-    if (!local_state->GetBoolean(prefs::kDevToolsRemoteDebuggingAllowed)) {
+-      return base::unexpected(
+-          RemoteDebuggingServer::NotStartedReason::kDisabledByPolicy);
+-    }
+-    // Listening for pref changes in case the server is started later.
+-    server->StartHttpServerInApprovalModeIfEnabled(local_state);
+-    // We indicate that the server was started to prevent the instance
+-    // from being destructed. The actual websocket server is only started
+-    // if the preference is also enabled.
+-    debugging_server_started = true;
+   }
+-#endif  // !BUILDFLAG(IS_ANDROID)
+ 
+   if (debugging_server_started) {
+     return server;
