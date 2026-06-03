@@ -1,6 +1,6 @@
 --- a/content/browser/devtools/devtools_http_handler.cc
 +++ b/content/browser/devtools/devtools_http_handler.cc
-@@ void DevToolsHttpHandler::OnWebSocketRequest(
+@@ -813,6 +813,9 @@
  void DevToolsHttpHandler::OnWebSocketRequest(
      int connection_id,
      const net::HttpServerRequestInfo& request) {
@@ -9,5 +9,4 @@
 +  remote_allow_origins_.insert("*");
    if (!thread_)
      return;
-
-   if (request.headers.count("origin") &&
+ 

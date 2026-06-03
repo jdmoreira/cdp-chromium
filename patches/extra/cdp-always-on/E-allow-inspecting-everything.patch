@@ -1,19 +1,34 @@
 --- a/chrome/browser/devtools/devtools_availability_checker.cc
 +++ b/chrome/browser/devtools/devtools_availability_checker.cc
-@@ bool IsInspectionAllowed(Profile* profile, content::WebContents* web_contents) {
+@@ -58,6 +58,7 @@
+ }  // namespace
+ 
  bool IsInspectionAllowed(Profile* profile, content::WebContents* web_contents) {
 +  return true;  // cdp-always-on: allow inspecting any page
    if (!web_contents) {
-@@ bool IsInspectionAllowed(Profile* profile,
+     // For contexts without web_contents, we can only check the general policy.
+     return IsInspectionAllowed(
+@@ -144,6 +145,7 @@
+ 
  bool IsInspectionAllowed(Profile* profile,
                           const extensions::Extension* extension) {
 +  return true;  // cdp-always-on: allow inspecting any extension
  #if !BUILDFLAG(IS_ANDROID)
-@@ bool IsInspectionAllowed(Profile* profile, const web_app::WebApp* web_app) {
+   if (extension) {
+     policy::DeveloperToolsPolicyChecker* checker =
+@@ -212,6 +214,7 @@
+ 
+ #if !BUILDFLAG(IS_ANDROID)
  bool IsInspectionAllowed(Profile* profile, const web_app::WebApp* web_app) {
 +  return true;  // cdp-always-on: allow inspecting any web app
    if (web_app) {
-@@ bool IsInspectionAllowed(Profile* profile, const GURL& url) {
+     policy::DeveloperToolsPolicyChecker* checker =
+         policy::DeveloperToolsPolicyCheckerFactory::GetForBrowserContext(
+@@ -256,6 +259,7 @@
+ #endif
+ 
  bool IsInspectionAllowed(Profile* profile, const GURL& url) {
 +  return true;  // cdp-always-on: allow inspecting any URL
    policy::DeveloperToolsPolicyChecker* checker =
+       policy::DeveloperToolsPolicyCheckerFactory::GetForBrowserContext(profile);
+   if (checker) {
